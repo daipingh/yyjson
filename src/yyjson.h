@@ -699,6 +699,12 @@ yyjson_api yyjson_doc *yyjson_read_opts(char *dat,
                                         const yyjson_alc *alc,
                                         yyjson_read_err *err);
 
+yyjson_api yyjson_mut_doc *yyjson_mut_read_opts(char *dat,
+                                                size_t len,
+                                                yyjson_read_flag flg,
+                                                const yyjson_alc *alc,
+                                                yyjson_read_err *err);
+
 /**
  Read a JSON file.
  
@@ -724,6 +730,11 @@ yyjson_api yyjson_doc *yyjson_read_file(const char *path,
                                         const yyjson_alc *alc,
                                         yyjson_read_err *err);
 
+yyjson_api yyjson_mut_doc *yyjson_mut_read_file(const char *path,
+                                                yyjson_read_flag flg,
+                                                const yyjson_alc *alc,
+                                                yyjson_read_err *err);
+
 /**
  Read a JSON string.
  
@@ -743,6 +754,13 @@ yyjson_api_inline yyjson_doc *yyjson_read(const char *dat,
                                           yyjson_read_flag flg) {
     flg &= ~YYJSON_READ_INSITU; /* const string cannot be modified */
     return yyjson_read_opts((char *)dat, len, flg, NULL, NULL);
+}
+
+yyjson_api_inline yyjson_mut_doc *yyjson_mut_read(const char *dat,
+                                                  size_t len,
+                                                  yyjson_read_flag flg) {
+    flg &= ~YYJSON_READ_INSITU; /* const string cannot be modified */
+    return yyjson_mut_read_opts((char *)dat, len, flg, NULL, NULL);
 }
 
 /**
@@ -4210,6 +4228,7 @@ typedef struct yyjson_val_pool {
 struct yyjson_mut_doc {
     yyjson_mut_val *root; /**< root value of the JSON document, nullable */
     yyjson_alc alc; /**< a valid allocator, nonnull */
+    yyjson_doc *idoc;
     yyjson_str_pool str_pool; /**< string memory pool */
     yyjson_val_pool val_pool; /**< value memory pool */
 };
